@@ -32,3 +32,13 @@ func (r *UserRepo) CountUsers() int {
 	r.db.Model(&domain.User{}).Count(&count)
 	return int(count)
 }
+
+func (r *UserRepo) GetMe(userID string) (interface{}, error) {
+	// TODO: 实现获取当前用户信息
+	return nil, nil
+}
+
+func (r *UserRepo) UpdateMe(userID, nickname, avatarURL, bio string) error {
+	// TODO: 实现更新用户信息
+	return nil
+}

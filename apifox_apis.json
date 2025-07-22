@@ -1,0 +1,298 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "旅游App API",
+    "version": "1.0.0",
+    "description": "适用于旅游App的主要接口定义"
+  },
+  "servers": [
+    { "url": "http://localhost:8000/api" }
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "summary": "用户注册",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": { "type": "string" },
+                  "password": { "type": "string" },
+                  "nickname": { "type": "string" }
+                },
+                "required": ["username", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "注册成功" },
+          "400": { "description": "参数错误" }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "用户登录",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": { "type": "string" },
+                  "password": { "type": "string" }
+                },
+                "required": ["username", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "登录成功，返回token" },
+          "401": { "description": "认证失败" }
+        }
+      }
+    },
+    "/users/me": {
+      "get": {
+        "summary": "获取当前用户信息",
+        "responses": {
+          "200": { "description": "用户信息" },
+          "401": { "description": "未登录" }
+        }
+      },
+      "put": {
+        "summary": "更新当前用户信息",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nickname": { "type": "string" },
+                  "avatar_url": { "type": "string" },
+                  "bio": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "更新成功" },
+          "400": { "description": "参数错误" }
+        }
+      }
+    },
+    "/routes": {
+      "get": {
+        "summary": "获取所有热门路线",
+        "responses": {
+          "200": { "description": "路线列表" }
+        }
+      }
+    },
+    "/routes/{routeId}": {
+      "get": {
+        "summary": "获取单条路线详情",
+        "parameters": [
+          { "name": "routeId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "路线详情" },
+          "404": { "description": "未找到" }
+        }
+      }
+    },
+    "/user-trips": {
+      "get": {
+        "summary": "获取我的所有行程",
+        "responses": {
+          "200": { "description": "行程列表" }
+        }
+      },
+      "post": {
+        "summary": "创建新行程（选择路线）",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "route_id": { "type": "string" },
+                  "start_date": { "type": "string", "format": "date" }
+                },
+                "required": ["route_id", "start_date"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "创建成功" },
+          "400": { "description": "参数错误" }
+        }
+      }
+    },
+    "/user-trips/{tripId}": {
+      "get": {
+        "summary": "获取单个行程详情",
+        "parameters": [
+          { "name": "tripId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "行程详情" },
+          "404": { "description": "未找到" }
+        }
+      }
+    },
+    "/moments": {
+      "get": {
+        "summary": "获取动态列表",
+        "responses": {
+          "200": { "description": "动态列表" }
+        }
+      },
+      "post": {
+        "summary": "发布动态",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "content": { "type": "string" },
+                  "image_urls": { "type": "array", "items": { "type": "string" } },
+                  "location": { "type": "string" }
+                },
+                "required": ["content"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "发布成功" },
+          "400": { "description": "参数错误" }
+        }
+      }
+    },
+    "/moments/{momentId}": {
+      "get": {
+        "summary": "获取单条动态详情",
+        "parameters": [
+          { "name": "momentId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "动态详情" },
+          "404": { "description": "未找到" }
+        }
+      }
+    },
+    "/moments/{momentId}/comments": {
+      "get": {
+        "summary": "获取动态评论列表",
+        "parameters": [
+          { "name": "momentId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "评论列表" }
+        }
+      },
+      "post": {
+        "summary": "发布评论",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "content": { "type": "string" }
+                },
+                "required": ["content"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "评论成功" },
+          "400": { "description": "参数错误" }
+        }
+      }
+    },
+    "/follows": {
+      "post": {
+        "summary": "关注用户",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "followee_id": { "type": "string" }
+                },
+                "required": ["followee_id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "关注成功" },
+          "400": { "description": "参数错误" }
+        }
+      },
+      "delete": {
+        "summary": "取消关注",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "followee_id": { "type": "string" }
+                },
+                "required": ["followee_id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "取消关注成功" },
+          "400": { "description": "参数错误" }
+        }
+      }
+    },
+    "/user-locations": {
+      "post": {
+        "summary": "上传用户定位",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "latitude": { "type": "number" },
+                  "longitude": { "type": "number" }
+                },
+                "required": ["latitude", "longitude"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "上传成功" },
+          "400": { "description": "参数错误" }
+        }
+      }
+    }
+  }
+} 
