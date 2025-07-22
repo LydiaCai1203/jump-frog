@@ -19,16 +19,14 @@ type FollowHandler struct {
 func RegisterFollowHandler(e *echo.Echo, followUsecase *usecase.FollowUsecase) {
 	h := &FollowHandler{FollowUsecase: followUsecase}
 	group := e.Group("/api/v1/follows")
-	group.POST("", h.Follow)
-	group.DELETE("", h.Unfollow)
+	group.POST("", h.PostFollow)
 }
 
-func (h *FollowHandler) Follow(c echo.Context) error {
-	// TODO: 关注用户
-	return c.JSON(http.StatusCreated, map[string]string{"message": "关注成功"})
-}
-
-func (h *FollowHandler) Unfollow(c echo.Context) error {
-	// TODO: 取消关注
-	return c.JSON(http.StatusOK, map[string]string{"message": "取消关注成功"})
+func (h *FollowHandler) PostFollow(c echo.Context) error {
+	var req FollowRequest
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid request"})
+	}
+	// TODO: 关注或取消关注
+	return c.JSON(http.StatusOK, map[string]string{"message": "关注/取消关注成功"})
 }

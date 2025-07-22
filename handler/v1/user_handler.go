@@ -8,10 +8,10 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type UpdateUserRequest struct {
-	Nickname  string `json:"nickname"`
-	AvatarURL string `json:"avatar_url"`
-	Bio       string `json:"bio"`
+type UserMeRequest struct {
+	Nickname  string `json:"nickname,omitempty"`
+	AvatarURL string `json:"avatar_url,omitempty"`
+	Bio       string `json:"bio,omitempty"`
 }
 
 type UserHandler struct {
@@ -21,16 +21,14 @@ type UserHandler struct {
 func RegisterUserHandler(e *echo.Echo, userUsecase *usecase.UserUsecase) {
 	h := &UserHandler{UserUsecase: userUsecase}
 	group := e.Group("/api/v1/users")
-	group.GET("/me", h.GetMe)
-	group.PUT("/me", h.UpdateMe)
+	group.POST("/me", h.PostMe)
 }
 
-func (h *UserHandler) GetMe(c echo.Context) error {
-	// TODO: 获取当前用户信息
-	return c.JSON(http.StatusOK, map[string]string{"message": "用户信息"})
-}
-
-func (h *UserHandler) UpdateMe(c echo.Context) error {
-	// TODO: 更新当前用户信息
-	return c.JSON(http.StatusOK, map[string]string{"message": "更新成功"})
+func (h *UserHandler) PostMe(c echo.Context) error {
+	var req UserMeRequest
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid request"})
+	}
+	// TODO: 根据 req 字段判断是获取还是更新，调用 usecase
+	return c.JSON(http.StatusOK, map[string]string{"message": "用户信息/更新成功"})
 }
