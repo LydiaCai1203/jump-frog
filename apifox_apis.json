@@ -11,6 +11,7 @@
   "paths": {
     "/auth/register": {
       "post": {
+        "tags": ["User"],
         "summary": "用户注册",
         "requestBody": {
           "required": true,
@@ -36,6 +37,7 @@
     },
     "/auth/login": {
       "post": {
+        "tags": ["User"],
         "summary": "用户登录",
         "requestBody": {
           "required": true,
@@ -59,15 +61,9 @@
       }
     },
     "/users/me": {
-      "get": {
+      "post": {
+        "tags": ["User"],
         "summary": "获取当前用户信息",
-        "responses": {
-          "200": { "description": "用户信息" },
-          "401": { "description": "未登录" }
-        }
-      },
-      "put": {
-        "summary": "更新当前用户信息",
         "requestBody": {
           "required": true,
           "content": {
@@ -84,25 +80,54 @@
           }
         },
         "responses": {
-          "200": { "description": "更新成功" },
-          "400": { "description": "参数错误" }
+          "200": { "description": "用户信息" },
+          "401": { "description": "未登录" }
         }
       }
     },
     "/routes": {
-      "get": {
+      "post": {
+        "tags": ["Route"],
         "summary": "获取所有热门路线",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "route_id": { "type": "string" },
+                  "start_date": { "type": "string", "format": "date" }
+                },
+                "required": ["route_id", "start_date"]
+              }
+            }
+          }
+        },
         "responses": {
           "200": { "description": "路线列表" }
         }
       }
     },
     "/routes/{routeId}": {
-      "get": {
+      "post": {
+        "tags": ["Route"],
         "summary": "获取单条路线详情",
-        "parameters": [
-          { "name": "routeId", "in": "path", "required": true, "schema": { "type": "string" } }
-        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "route_id": { "type": "string" },
+                  "start_date": { "type": "string", "format": "date" }
+                },
+                "required": ["route_id", "start_date"]
+              }
+            }
+          }
+        },
         "responses": {
           "200": { "description": "路线详情" },
           "404": { "description": "未找到" }
@@ -110,13 +135,30 @@
       }
     },
     "/user-trips": {
-      "get": {
+      "post": {
+        "tags": ["UserTrip"],
         "summary": "获取我的所有行程",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "route_id": { "type": "string" },
+                  "start_date": { "type": "string", "format": "date" }
+                },
+                "required": ["route_id", "start_date"]
+              }
+            }
+          }
+        },
         "responses": {
           "200": { "description": "行程列表" }
         }
       },
       "post": {
+        "tags": ["UserTrip"],
         "summary": "创建新行程（选择路线）",
         "requestBody": {
           "required": true,
@@ -140,11 +182,23 @@
       }
     },
     "/user-trips/{tripId}": {
-      "get": {
+      "post": {
+        "tags": ["UserTrip"],
         "summary": "获取单个行程详情",
-        "parameters": [
-          { "name": "tripId", "in": "path", "required": true, "schema": { "type": "string" } }
-        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "trip_id": { "type": "string" }
+                },
+                "required": ["trip_id"]
+              }
+            }
+          }
+        },
         "responses": {
           "200": { "description": "行程详情" },
           "404": { "description": "未找到" }
@@ -152,13 +206,29 @@
       }
     },
     "/moments": {
-      "get": {
+      "post": {
+        "tags": ["Moment"],
         "summary": "获取动态列表",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "moment_id": { "type": "string" }
+                },
+                "required": ["moment_id"]
+              }
+            }
+          }
+        },
         "responses": {
           "200": { "description": "动态列表" }
         }
       },
       "post": {
+        "tags": ["Moment"],
         "summary": "发布动态",
         "requestBody": {
           "required": true,
@@ -183,11 +253,23 @@
       }
     },
     "/moments/{momentId}": {
-      "get": {
+      "post": {
+        "tags": ["Moment"],
         "summary": "获取单条动态详情",
-        "parameters": [
-          { "name": "momentId", "in": "path", "required": true, "schema": { "type": "string" } }
-        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "moment_id": { "type": "string" }
+                },
+                "required": ["moment_id"]
+              }
+            }
+          }
+        },
         "responses": {
           "200": { "description": "动态详情" },
           "404": { "description": "未找到" }
@@ -195,16 +277,29 @@
       }
     },
     "/moments/{momentId}/comments": {
-      "get": {
+      "post": {
+        "tags": ["Comment"],
         "summary": "获取动态评论列表",
-        "parameters": [
-          { "name": "momentId", "in": "path", "required": true, "schema": { "type": "string" } }
-        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "moment_id": { "type": "string" }
+                },
+                "required": ["moment_id"]
+              }
+            }
+          }
+        },
         "responses": {
           "200": { "description": "评论列表" }
         }
       },
       "post": {
+        "tags": ["Comment"],
         "summary": "发布评论",
         "requestBody": {
           "required": true,
@@ -228,6 +323,7 @@
     },
     "/follows": {
       "post": {
+        "tags": ["Follow"],
         "summary": "关注用户",
         "requestBody": {
           "required": true,
@@ -249,6 +345,7 @@
         }
       },
       "delete": {
+        "tags": ["Follow"],
         "summary": "取消关注",
         "requestBody": {
           "required": true,
@@ -272,6 +369,7 @@
     },
     "/user-locations": {
       "post": {
+        "tags": ["UserLocation"],
         "summary": "上传用户定位",
         "requestBody": {
           "required": true,

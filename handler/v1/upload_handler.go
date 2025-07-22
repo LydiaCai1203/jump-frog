@@ -3,7 +3,6 @@ package v1
 import (
 	"context"
 	"fmt"
-	"net/http"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -12,6 +11,7 @@ import (
 )
 
 type UploadHandler struct {
+	BaseHandler
 	S3Client *s3.Client
 	Bucket   string
 }
@@ -30,21 +30,14 @@ func NewUploadHandler(e *echo.Echo, bucket string) (*UploadHandler, error) {
 	return h, nil
 }
 
-// Upload godoc
-// @Summary 上传文件到 S3
-// @Accept multipart/form-data
-// @Produce json
-// @Param file formData file true "文件"
-// @Success 200 {object} map[string]string
-// @Router /api/v1/upload [post]
 func (h *UploadHandler) Upload(c echo.Context) error {
 	file, err := c.FormFile("file")
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "missing file"})
+		return h.NewResponseWithError(c, "missing file", err)
 	}
 	src, err := file.Open()
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "open file failed"})
+		return h.NewResponseWithError(c, "open file failed", err)
 	}
 	defer src.Close()
 
@@ -55,7 +48,7 @@ func (h *UploadHandler) Upload(c echo.Context) error {
 		Body:   src,
 	})
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": fmt.Sprintf("upload failed: %v", err)})
+		return h.NewResponseWithError(c, fmt.Sprintf("upload failed: %v", err), err)
 	}
-	return c.JSON(http.StatusOK, map[string]string{"message": "upload success", "key": key})
+	return h.NewResponseWithData(c, map[string]string{"message": "upload success", "key": key})
 }

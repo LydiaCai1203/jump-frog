@@ -1,41 +1,51 @@
 package v1
 
 import (
-	"net/http"
+	"errors"
 
+	"framework/domain"
 	"framework/usecase"
 
 	"github.com/labstack/echo/v4"
 )
 
-type RegisterRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Nickname string `json:"nickname"`
-}
-
-type LoginRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
-
 type AuthHandler struct {
+	BaseHandler
 	AuthUsecase *usecase.AuthUsecase
 }
 
 func RegisterAuthHandler(e *echo.Echo, authUsecase *usecase.AuthUsecase) {
 	h := &AuthHandler{AuthUsecase: authUsecase}
+
 	group := e.Group("/api/v1/auth")
 	group.POST("/register", h.Register)
 	group.POST("/login", h.Login)
 }
 
 func (h *AuthHandler) Register(c echo.Context) error {
-	// TODO: 参数校验、调用 usecase、返回响应
-	return c.JSON(http.StatusCreated, map[string]string{"message": "注册成功"})
+	var req domain.RegisterRequest
+	if err := c.Bind(&req); err != nil {
+		return errors.New("invalid request")
+	}
+	if req.Username == "" || req.Password == "" {
+		return errors.New("username and password are required")
+	}
+	return h.NewResponseWithData(c, &domain.RegisterResponse{
+		ID:       1,
+		Username: req.Username,
+		Nickname: req.Nickname,
+	})
 }
 
 func (h *AuthHandler) Login(c echo.Context) error {
-	// TODO: 参数校验、调用 usecase、返回响应
-	return c.JSON(http.StatusOK, map[string]string{"token": "mock_token"})
+	var req domain.LoginRequest
+	if err := c.Bind(&req); err != nil {
+		return errors.New("invalid request")
+	}
+	if req.Username == "" || req.Password == "" {
+		return errors.New("username and password are required")
+	}
+	return h.NewResponseWithData(c, &domain.LoginResponse{
+		Token: "mock_token",
+	})
 }
