@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"framework/domain"
 	"framework/usecase"
 
 	"github.com/labstack/echo/v4"
@@ -19,15 +20,26 @@ func RegisterRouteHandler(e *echo.Echo, routeUsecase *usecase.RouteUsecase) {
 }
 
 func (h *RouteHandler) List(c echo.Context) error {
-	return nil
+	var req domain.RouteListRequest
+	if err := c.Bind(&req); err != nil {
+		return h.NewResponseWithError(c, "invalid request", err)
+	}
+	// TODO: 调用 usecase 获取数据
+	resp := domain.RouteListResponse{
+		List:  []domain.RouteDetail{},
+		Total: 0,
+		Page:  req.Page,
+		Limit: req.Limit,
+	}
+	return h.NewResponseWithData(c, resp)
 }
 
 func (h *RouteHandler) Detail(c echo.Context) error {
-	var req struct {
-		RouteID string `json:"route_id"`
-	}
+	var req domain.RouteDetailRequestV2
 	if err := c.Bind(&req); err != nil || req.RouteID == "" {
 		return h.NewResponseWithError(c, "route_id is required", err)
 	}
-	return nil
+	// TODO: 调用 usecase 获取数据
+	resp := domain.RouteDetail{}
+	return h.NewResponseWithData(c, resp)
 }

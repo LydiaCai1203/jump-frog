@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"framework/domain"
 	"framework/usecase"
 
 	"github.com/labstack/echo/v4"
@@ -19,26 +20,21 @@ func RegisterUserTripHandler(e *echo.Echo, userTripUsecase *usecase.UserTripUsec
 }
 
 func (h *UserTripHandler) List(c echo.Context) error {
-	// 假设返回行程列表
-	trips := []map[string]any{
-		{
-			"trip_id":    "1",
-			"route_id":   "1",
-			"start_date": "2024-01-01",
-			"status":     "ongoing",
-		},
+	var req domain.UserTripChooseRequest
+	if err := c.Bind(&req); err != nil {
+		return h.NewResponseWithError(c, "invalid request", err)
 	}
-	return h.NewResponseWithData(c, trips)
+	// TODO: 调用 usecase 获取行程列表
+	resp := []domain.TripDetail{}
+	return h.NewResponseWithData(c, resp)
 }
 
 func (h *UserTripHandler) Detail(c echo.Context) error {
-	var req struct {
-		TripID string `json:"trip_id"`
-	}
+	var req domain.UserTripDetailRequestV2
 	if err := c.Bind(&req); err != nil || req.TripID == "" {
 		return h.NewResponseWithError(c, "trip_id is required", err)
 	}
-	// 假设返回行程详情
-	detail := map[string]any{"trip_id": req.TripID, "route_id": "1", "start_date": "2024-01-01", "status": "ongoing"}
-	return h.NewResponseWithData(c, detail)
+	// TODO: 调用 usecase 获取行程详情
+	resp := domain.TripDetail{}
+	return h.NewResponseWithData(c, resp)
 }

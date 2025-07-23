@@ -1,8 +1,6 @@
 package v1
 
 import (
-	"errors"
-
 	"framework/domain"
 	"framework/usecase"
 
@@ -25,27 +23,29 @@ func RegisterAuthHandler(e *echo.Echo, authUsecase *usecase.AuthUsecase) {
 func (h *AuthHandler) Register(c echo.Context) error {
 	var req domain.RegisterRequest
 	if err := c.Bind(&req); err != nil {
-		return errors.New("invalid request")
+		return h.NewResponseWithError(c, "invalid request", err)
 	}
 	if req.Username == "" || req.Password == "" {
-		return errors.New("username and password are required")
+		return h.NewResponseWithError(c, "username and password are required", nil)
 	}
-	return h.NewResponseWithData(c, &domain.RegisterResponse{
-		ID:       1,
-		Username: req.Username,
-		Nickname: req.Nickname,
-	})
+	// TODO: 调用 usecase 注册
+	resp := struct {
+		ID string `json:"id"`
+	}{ID: "mock_id"}
+	return h.NewResponseWithData(c, resp)
 }
 
 func (h *AuthHandler) Login(c echo.Context) error {
 	var req domain.LoginRequest
 	if err := c.Bind(&req); err != nil {
-		return errors.New("invalid request")
+		return h.NewResponseWithError(c, "invalid request", err)
 	}
 	if req.Username == "" || req.Password == "" {
-		return errors.New("username and password are required")
+		return h.NewResponseWithError(c, "username and password are required", nil)
 	}
-	return h.NewResponseWithData(c, &domain.LoginResponse{
-		Token: "mock_token",
-	})
+	// TODO: 调用 usecase 登录
+	resp := struct {
+		Token string `json:"token"`
+	}{Token: "mock_token"}
+	return h.NewResponseWithData(c, resp)
 }

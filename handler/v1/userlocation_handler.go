@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"framework/domain"
 	"framework/usecase"
 
 	"github.com/labstack/echo/v4"
@@ -18,17 +19,15 @@ func RegisterUserLocationHandler(e *echo.Echo, userLocationUsecase *usecase.User
 }
 
 func (h *UserLocationHandler) Upload(c echo.Context) error {
-	var req struct {
-		Latitude  float64 `json:"latitude"`
-		Longitude float64 `json:"longitude"`
-	}
+	var req domain.UserLocationRequest
 	if err := c.Bind(&req); err != nil || req.Latitude == 0 || req.Longitude == 0 {
 		return h.NewResponseWithError(c, "latitude and longitude are required", err)
 	}
-	// 假设上传成功
-	return h.NewResponseWithData(c, map[string]any{
-		"latitude":  req.Latitude,
-		"longitude": req.Longitude,
-		"status":    "uploaded",
-	})
+	// TODO: 调用 usecase 上传定位
+	resp := domain.UserLocationResponse{
+		Latitude:  req.Latitude,
+		Longitude: req.Longitude,
+		Status:    "uploaded",
+	}
+	return h.NewResponseWithData(c, resp)
 }

@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"framework/domain"
 	"framework/usecase"
 
 	"github.com/labstack/echo/v4"
@@ -18,15 +19,14 @@ func RegisterFollowHandler(e *echo.Echo, followUsecase *usecase.FollowUsecase) {
 }
 
 func (h *FollowHandler) Follow(c echo.Context) error {
-	var req struct {
-		FolloweeID string `json:"followee_id"`
-	}
+	var req domain.FollowRequest
 	if err := c.Bind(&req); err != nil || req.FolloweeID == "" {
 		return h.NewResponseWithError(c, "followee_id is required", err)
 	}
-	// 假设关注成功
-	return h.NewResponseWithData(c, map[string]any{
-		"followee_id": req.FolloweeID,
-		"status":      "followed",
-	})
+	// TODO: 调用 usecase 关注
+	resp := domain.FollowResponse{
+		FolloweeID: req.FolloweeID,
+		Status:     "followed",
+	}
+	return h.NewResponseWithData(c, resp)
 }

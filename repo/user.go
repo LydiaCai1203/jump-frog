@@ -1,44 +1,23 @@
 package repo
 
-import (
-	"framework/domain"
-
-	"gorm.io/gorm"
-)
+import "framework/domain"
 
 type UserRepo struct {
-	db *gorm.DB
+	// TODO: 注入 *gorm.DB
 }
 
-func NewUserRepo(db *gorm.DB) *UserRepo {
-	return &UserRepo{db: db}
+func NewUserRepo() *UserRepo {
+	return &UserRepo{}
 }
 
-func (r *UserRepo) CreateUser(user *domain.User) error {
-	return r.db.Create(user).Error
-}
-
-func (r *UserRepo) FindByUsername(username string) (*domain.User, error) {
-	var user domain.User
-	err := r.db.Where("username = ?", username).First(&user).Error
-	if err != nil {
-		return nil, err
-	}
-	return &user, nil
-}
-
-func (r *UserRepo) CountUsers() int {
-	var count int64
-	r.db.Model(&domain.User{}).Count(&count)
-	return int(count)
-}
-
-func (r *UserRepo) GetMe(userID string) (interface{}, error) {
+// 获取当前用户信息
+func (r *UserRepo) Info(req domain.UserMeInfoRequest) (domain.UserInfo, error) {
 	// TODO: 实现获取当前用户信息
-	return nil, nil
+	return domain.UserInfo{}, nil
 }
 
-func (r *UserRepo) UpdateMe(userID, nickname, avatarURL, bio string) error {
+// 更新当前用户信息
+func (r *UserRepo) Update(req domain.UserMeUpdateRequest) error {
 	// TODO: 实现更新用户信息
 	return nil
 }

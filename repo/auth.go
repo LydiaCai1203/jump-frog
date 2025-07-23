@@ -1,5 +1,7 @@
 package repo
 
+import "framework/domain"
+
 type AuthRepo struct {
 	// TODO: 注入 *gorm.DB
 }
@@ -8,12 +10,14 @@ func NewAuthRepo() *AuthRepo {
 	return &AuthRepo{}
 }
 
-func (r *AuthRepo) CreateUser(username, password, nickname string) error {
-	// TODO: 实现用户注册
-	return nil
+// 用户注册
+func (r *AuthRepo) Register(req domain.RegisterRequest) (id string, err error) {
+	// TODO: 实现注册
+	return "mock_id", nil
 }
 
-func (r *AuthRepo) CheckUser(username, password string) (bool, error) {
-	// TODO: 实现用户校验
-	return true, nil
+// 用户登录校验
+func (r *AuthRepo) Login(req domain.LoginRequest) (token string, err error) {
+	// TODO: 实现登录校验
+	return "mock_token", nil
 }
