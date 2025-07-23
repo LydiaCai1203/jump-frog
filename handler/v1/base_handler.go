@@ -13,8 +13,8 @@ type BaseHandler struct{}
 // NewResponseWithData 返回统一成功响应
 func (h *BaseHandler) NewResponseWithData(c echo.Context, data interface{}) error {
 	return c.JSON(http.StatusOK, domain.Response[any]{
-		Code:    0,
-		Message: "ok",
+		Code:    http.StatusOK,
+		Message: "success",
 		Data:    data,
 	})
 }
@@ -22,7 +22,7 @@ func (h *BaseHandler) NewResponseWithData(c echo.Context, data interface{}) erro
 // NewResponseWithError 返回统一错误响应
 func (h *BaseHandler) NewResponseWithError(c echo.Context, msg string, err error) error {
 	return c.JSON(http.StatusOK, domain.Response[any]{
-		Code:    500,
+		Code:    http.StatusInternalServerError,
 		Message: msg,
 		Data:    nil,
 	})
