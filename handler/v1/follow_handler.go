@@ -15,7 +15,11 @@ type FollowHandler struct {
 func RegisterFollowHandler(e *echo.Echo, followUsecase *usecase.FollowUsecase) {
 	h := &FollowHandler{FollowUsecase: followUsecase}
 	group := e.Group("/api/v1/follows")
-	group.POST("", h.Follow)
+	group.POST("/follow", h.Follow)
+	group.POST("/unflow", h.Unfollow)
+
+	e.POST("/api/v1/users/:userId/followers", h.Followers)
+	e.POST("/api/v1/users/:userId/followees", h.Followees)
 }
 
 func (h *FollowHandler) Follow(c echo.Context) error {
@@ -29,4 +33,20 @@ func (h *FollowHandler) Follow(c echo.Context) error {
 		Status:     "followed",
 	}
 	return h.NewResponseWithData(c, resp)
+}
+
+// 新增 Unfollow、Followers、Followees handler 方法
+func (h *FollowHandler) Unfollow(c echo.Context) error {
+	// TODO: usecase.Unfollow
+	return h.NewResponseWithData(c, nil)
+}
+
+func (h *FollowHandler) Followers(c echo.Context) error {
+	// TODO: usecase.Followers
+	return h.NewResponseWithData(c, nil)
+}
+
+func (h *FollowHandler) Followees(c echo.Context) error {
+	// TODO: usecase.Followees
+	return h.NewResponseWithData(c, nil)
 }

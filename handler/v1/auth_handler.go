@@ -14,7 +14,6 @@ type AuthHandler struct {
 
 func RegisterAuthHandler(e *echo.Echo, authUsecase *usecase.AuthUsecase) {
 	h := &AuthHandler{AuthUsecase: authUsecase}
-
 	group := e.Group("/api/v1/auth")
 	group.POST("/register", h.Register)
 	group.POST("/login", h.Login)

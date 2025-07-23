@@ -15,8 +15,8 @@ type UserTripHandler struct {
 func RegisterUserTripHandler(e *echo.Echo, userTripUsecase *usecase.UserTripUsecase) {
 	h := &UserTripHandler{UserTripUsecase: userTripUsecase}
 	group := e.Group("/api/v1/user-trips")
-	group.POST("", h.List)
-	group.POST("/detail", h.Detail)
+	group.POST("/choose", h.Choose)
+	group.POST("/:tripId", h.Detail)
 }
 
 func (h *UserTripHandler) List(c echo.Context) error {
@@ -37,4 +37,10 @@ func (h *UserTripHandler) Detail(c echo.Context) error {
 	// TODO: 调用 usecase 获取行程详情
 	resp := domain.TripDetail{}
 	return h.NewResponseWithData(c, resp)
+}
+
+// 新增 Choose handler 方法
+func (h *UserTripHandler) Choose(c echo.Context) error {
+	// TODO: usecase.Choose
+	return h.NewResponseWithData(c, nil)
 }

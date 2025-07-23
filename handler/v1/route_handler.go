@@ -15,8 +15,8 @@ type RouteHandler struct {
 func RegisterRouteHandler(e *echo.Echo, routeUsecase *usecase.RouteUsecase) {
 	h := &RouteHandler{RouteUsecase: routeUsecase}
 	group := e.Group("/api/v1/routes")
-	group.POST("", h.List)
-	group.POST("/detail", h.Detail)
+	group.POST("/list", h.List)
+	group.POST("/:routeId", h.Detail)
 }
 
 func (h *RouteHandler) List(c echo.Context) error {

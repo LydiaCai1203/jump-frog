@@ -15,7 +15,7 @@ type UserLocationHandler struct {
 func RegisterUserLocationHandler(e *echo.Echo, userLocationUsecase *usecase.UserLocationUsecase) {
 	h := &UserLocationHandler{UserLocationUsecase: userLocationUsecase}
 	group := e.Group("/api/v1/user-locations")
-	group.POST("", h.Upload)
+	group.POST("/upload", h.Upload)
 }
 
 func (h *UserLocationHandler) Upload(c echo.Context) error {
