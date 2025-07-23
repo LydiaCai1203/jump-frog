@@ -1,7 +1,4 @@
-FROM --platform=$BUILDPLATFORM portus.in.chaitin.net/library/golang:1.23-alpine AS builder
-
-RUN --mount=type=secret,id=SECRET_TOKEN \
-echo -e "machine git.in.chaitin.net\nlogin gitlab-ci-token\npassword $(cat /run/secrets/SECRET_TOKEN)" > ~/.netrc
+FROM --platform=$BUILDPLATFORM golang:1.23-alpine AS builder
 
 WORKDIR /src
 ENV CGO_ENABLED=0
@@ -16,8 +13,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg/mod \
     GOOS=$TARGETOS GOARCH=$TARGETARCH go build -ldflags "-s -w -extldflags '-static'" -o /build/api cmd/api/main.go
 
-
-FROM --platform=$TARGETPLATFORM portus.in.chaitin.net/library/alpine:3.19 AS api
+FROM --platform=$TARGETPLATFORM alpine:3.19 AS api
 
 RUN apk update \
     && apk upgrade \

@@ -1,45 +1,45 @@
 services:
-  intelligence-backend:
+  jumpfrog-api:
     depends_on:
       - postgres
     restart: always
-    image: portus.in.chaitin.net/safepoint/intelligence-backend:local
+    image: jumpfrog/api:local
     ports:
       - "8080:8080"
     volumes:
       - ./config/api:/app/config
       - ./static/awdb:/app/static/awdb
     environment:
-      - SAFEPOINT_ENV=local
+      - JUMPFROG_ENV=local
     networks:
       intelligence:
         ipv4_address: 169.254.11.2
-  intelligence-consumer:
-    image: portus.in.chaitin.net/safepoint/intelligence-consumer:local
+  jumpfrog-consumer:
+    image: jumpfrog/consumer:local
     restart: always
     environment:
-      - SAFEPOINT_ENV=local
+      - JUMPFROG_ENV=local
     volumes:
       - ./config/consumer:/app/config
     networks:
       intelligence:
         ipv4_address: 169.254.11.3
-  intelligence-cron:
-    image: portus.in.chaitin.net/safepoint/intelligence-cron:local
+  jumpfrog-cron:
+    image: jumpfrog/cron:local
     restart: always
     volumes:
       - ./config/cron:/app/config
     networks:
       intelligence:
         ipv4_address: 169.254.11.4
-  intelligence-admin:
-    image: portus.in.chaitin.net/safepoint/intelligence-admin:local
+  jumpfrog-admin:
+    image: jumpfrog/admin:local
     restart: always
     volumes:
       - ./config/admin:/app/config
       - ./static/awdb:/app/static/awdb
     environment:
-      - SAFEPOINT_ENV=local
+      - JUMPFROG_ENV=local
     ports:
       - 8082:8080
     networks:
@@ -49,9 +49,9 @@ services:
     image: postgres:16
     restart: always
     environment:
-      - POSTGRES_USER=intelligence
-      - POSTGRES_PASSWORD=intelligence7878
-      - POSTGRES_DB=intelligence
+      - POSTGRES_USER=jumpfrog
+      - POSTGRES_PASSWORD=jumpfrog7878
+      - POSTGRES_DB=jumpfrog
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
     networks:
