@@ -23,6 +23,30 @@ func NewDB() (*DB, error) {
 	if err != nil {
 		return nil, err
 	}
+	err = db.AutoMigrate(&domain.Route{})
+	if err != nil {
+		return nil, err
+	}
+	err = db.AutoMigrate(&domain.UserTrip{})
+	if err != nil {
+		return nil, err
+	}
+	err = db.AutoMigrate(&domain.Moment{})
+	if err != nil {
+		return nil, err
+	}
+	err = db.AutoMigrate(&domain.Comment{})
+	if err != nil {
+		return nil, err
+	}
+	err = db.AutoMigrate(&domain.UserLocation{})
+	if err != nil {
+		return nil, err
+	}
+	err = db.AutoMigrate(&domain.Follow{})
+	if err != nil {
+		return nil, err
+	}
 
 	return &DB{DB: db}, nil
 }
