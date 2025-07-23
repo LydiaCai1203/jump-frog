@@ -27,6 +27,10 @@ func NewDB() (*DB, error) {
 	if err != nil {
 		return nil, err
 	}
+	err = db.AutoMigrate(&domain.RouteNode{})
+	if err != nil {
+		return nil, err
+	}
 	err = db.AutoMigrate(&domain.UserTrip{})
 	if err != nil {
 		return nil, err

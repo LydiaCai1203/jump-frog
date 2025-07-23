@@ -15,31 +15,36 @@ type RouteHandler struct {
 func RegisterRouteHandler(e *echo.Echo, routeUsecase *usecase.RouteUsecase) {
 	h := &RouteHandler{RouteUsecase: routeUsecase}
 	group := e.Group("/api/v1/routes")
-	group.POST("/list", h.List)
-	group.POST("/:routeId", h.Detail)
+	group.POST("/list", h.RouteList)
+	group.POST("/:routeId", h.RouteDetail)
 }
 
-func (h *RouteHandler) List(c echo.Context) error {
+// RouteList 获取路线列表
+func (h *RouteHandler) RouteList(c echo.Context) error {
 	var req domain.RouteListRequest
 	if err := c.Bind(&req); err != nil {
 		return h.NewResponseWithError(c, "invalid request", err)
 	}
-	// TODO: 调用 usecase 获取数据
-	resp := domain.RouteListResponse{
-		List:  []domain.RouteDetail{},
-		Total: 0,
-		Page:  req.Page,
-		Limit: req.Limit,
+
+	resp, err := h.RouteUsecase.RouteList(req)
+	if err != nil {
+		return h.NewResponseWithError(c, "failed to get route list", err)
 	}
+
 	return h.NewResponseWithData(c, resp)
 }
 
-func (h *RouteHandler) Detail(c echo.Context) error {
+// RouteDetail 获取路线详情
+func (h *RouteHandler) RouteDetail(c echo.Context) error {
 	var req domain.RouteDetailRequestV2
 	if err := c.Bind(&req); err != nil || req.RouteID == "" {
 		return h.NewResponseWithError(c, "route_id is required", err)
 	}
-	// TODO: 调用 usecase 获取数据
-	resp := domain.RouteDetail{}
+
+	resp, err := h.RouteUsecase.RouteDetail(req)
+	if err != nil {
+		return h.NewResponseWithError(c, "failed to get route detail", err)
+	}
+
 	return h.NewResponseWithData(c, resp)
 }

@@ -1,23 +1,46 @@
 package repo
 
-import "framework/domain"
+import (
+	"framework/domain"
+
+	"gorm.io/gorm"
+)
 
 type RouteRepo struct {
-	// TODO: 注入 *gorm.DB
+	db *gorm.DB
 }
 
-func NewRouteRepo() *RouteRepo {
-	return &RouteRepo{}
+func NewRouteRepo(db *gorm.DB) *RouteRepo {
+	return &RouteRepo{db: db}
 }
 
-// 获取路线列表
-func (r *RouteRepo) List(req domain.RouteListRequest) (domain.RouteListResponse, error) {
-	// TODO: 实现获取路线列表
-	return domain.RouteListResponse{}, nil
+// RouteList 获取路线列表
+func (r *RouteRepo) RouteList(page int, limit int) (int64, []*domain.Route, error) {
+	var total int64
+	err := r.db.Model(&domain.Route{}).Count(&total).Error
+	if err != nil {
+		return 0, nil, err
+	}
+
+	var routes []*domain.Route
+	err = r.db.
+		Offset((page - 1) * limit).
+		Limit(limit).
+		Find(&routes).
+		Order("created_at desc").
+		Error
+	if err != nil {
+		return 0, nil, err
+	}
+	return total, routes, nil
 }
 
-// 获取路线详情
-func (r *RouteRepo) Detail(req domain.RouteDetailRequestV2) (domain.RouteDetail, error) {
-	// TODO: 实现获取路线详情
-	return domain.RouteDetail{}, nil
+// RouteDetail 获取路线详情
+func (r *RouteRepo) RouteDetail(routeID string) (*domain.Route, error) {
+	var route *domain.Route
+	err := r.db.Where("id = ?", routeID).First(&route).Error
+	if err != nil {
+		return nil, err
+	}
+	return route, nil
 }

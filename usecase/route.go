@@ -1,23 +1,54 @@
 package usecase
 
-import "framework/domain"
+import (
+	"framework/domain"
+	"framework/repo"
+)
 
 type RouteUsecase struct {
-	// TODO: 注入 repo 层依赖
+	routeRepo *repo.RouteRepo
 }
 
-func NewRouteUsecase() *RouteUsecase {
-	return &RouteUsecase{}
+func NewRouteUsecase(routeRepo *repo.RouteRepo) *RouteUsecase {
+	return &RouteUsecase{
+		routeRepo: routeRepo,
+	}
 }
 
-// 获取路线列表
-func (u *RouteUsecase) List(req domain.RouteListRequest) (domain.RouteListResponse, error) {
-	// TODO: 实现获取路线列表逻辑
-	return domain.RouteListResponse{}, nil
+// RouteList 获取路线列表
+func (u *RouteUsecase) RouteList(req domain.RouteListRequest) (domain.RouteListResponse, error) {
+	total, routes, err := u.routeRepo.RouteList(req.Page, req.Limit)
+	if err != nil {
+		return domain.RouteListResponse{}, err
+	}
+
+	var list []domain.RouteDetail
+	for _, route := range routes {
+		list = append(list, domain.RouteDetail{
+			ID:          route.ID,
+			Name:        route.Name,
+			Description: route.Description,
+		})
+	}
+
+	return domain.RouteListResponse{
+		List:  list,
+		Total: int(total),
+		Page:  req.Page,
+		Limit: req.Limit,
+	}, nil
 }
 
-// 获取路线详情
-func (u *RouteUsecase) Detail(req domain.RouteDetailRequestV2) (domain.RouteDetail, error) {
-	// TODO: 实现获取路线详情逻辑
-	return domain.RouteDetail{}, nil
+// RouteDetail 获取路线详情
+func (u *RouteUsecase) RouteDetail(req domain.RouteDetailRequestV2) (domain.RouteDetail, error) {
+	route, err := u.routeRepo.RouteDetail(req.RouteID)
+	if err != nil {
+		return domain.RouteDetail{}, err
+	}
+
+	return domain.RouteDetail{
+		ID:          route.ID,
+		Name:        route.Name,
+		Description: route.Description,
+	}, nil
 }
