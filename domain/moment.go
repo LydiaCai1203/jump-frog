@@ -9,6 +9,7 @@ type Moment struct {
 	Content   string    `gorm:"type:text" json:"content"`
 	ImageURLs string    `gorm:"type:jsonb" json:"image_urls"`
 	Location  string    `gorm:"size:128" json:"location"`
+	Likes     int       `gorm:"default:0" json:"likes"`
 	CreatedAt time.Time `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime" json:"updated_at"`
 }

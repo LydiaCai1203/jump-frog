@@ -38,18 +38,14 @@ type UserInfo struct {
 // 动态详情
 // openapi: MomentDetail
 type MomentDetail struct {
-	ID   string `json:"id"`
-	User struct {
-		ID        string `json:"id"`
-		Nickname  string `json:"nickname"`
-		AvatarURL string `json:"avatar_url"`
-	} `json:"user"`
-	Content       string   `json:"content"`
-	ImageUrls     []string `json:"image_urls"`
-	Location      string   `json:"location"`
-	CreatedAt     string   `json:"created_at"`
-	LikesCount    int      `json:"likes_count"`
-	CommentsCount int      `json:"comments_count"`
+	ID            string     `json:"id"`
+	User          UserSimple `json:"user"`
+	Content       string     `json:"content"`
+	ImageUrls     []string   `json:"image_urls"`
+	Location      string     `json:"location"`
+	CreatedAt     string     `json:"created_at"`
+	LikesCount    int        `json:"likes_count"`
+	CommentsCount int        `json:"comments_count"`
 }
 
 // 动态列表响应体
@@ -126,12 +122,11 @@ type FollowResponse struct {
 }
 
 // 粉丝/关注用户
-// {"id": "", "nickname": "", "avatar_url": "", "bio": ""}
+// {"id": "", "nickname": "", "avatar_url": ""}
 type UserSimple struct {
 	ID        string `json:"id"`
 	Nickname  string `json:"nickname"`
 	AvatarURL string `json:"avatar_url"`
-	Bio       string `json:"bio"`
 }
 
 // 粉丝/关注列表响应体
