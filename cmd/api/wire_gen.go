@@ -9,8 +9,12 @@ package main
 import (
 	"framework/apm"
 	"framework/config"
+	"framework/db/pg"
+	v1 "framework/handler/v1"
 	"framework/log"
+	"framework/repo"
 	"framework/server/http"
+	"framework/usecase"
 )
 
 // Injectors from wire.go:
@@ -29,10 +33,23 @@ func createApp() (*App, error) {
 	if err != nil {
 		return nil, err
 	}
+	db, err := pg.NewDB()
+	if err != nil {
+		return nil, err
+	}
+	gormDB := pg.ProvideGormDB(db)
+	authRepo := repo.NewAuthRepo(gormDB)
+	authUsecase := usecase.NewAuthUsecase(authRepo)
+	authHandler := v1.NewAuthHandler(echo, authUsecase)
+	apiHandlers := &v1.APIHandlers{
+		AuthHandler: authHandler,
+	}
+
 	app := &App{
 		HTTPServer: httpServer,
 		Config:     configConfig,
 		Tracer:     tracer,
+		Handlers:   apiHandlers,
 	}
 	return app, nil
 }
@@ -43,4 +60,5 @@ type App struct {
 	HTTPServer *http.HTTPServer
 	Config     *config.Config
 	Tracer     *apm.Tracer
+	Handlers   *v1.APIHandlers
 }

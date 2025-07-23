@@ -8,6 +8,7 @@ import (
 	"framework/config"
 	"framework/db"
 	"framework/log"
+	"framework/repo"
 	"framework/server/http"
 
 	"github.com/google/wire"
@@ -22,6 +23,7 @@ func createApp() (*App, error) {
 			http.ProviderSet,
 			log.ProviderSet,
 			apm.ProviderSet,
+			repo.ProviderSet,
 		),
 	)
 	return &App{}, nil

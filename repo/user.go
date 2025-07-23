@@ -1,13 +1,19 @@
 package repo
 
-import "framework/domain"
+import (
+	"framework/domain"
+
+	"gorm.io/gorm"
+)
 
 type UserRepo struct {
-	// TODO: 注入 *gorm.DB
+	db *gorm.DB
 }
 
-func NewUserRepo() *UserRepo {
-	return &UserRepo{}
+func NewUserRepo(db *gorm.DB) *UserRepo {
+	return &UserRepo{
+		db: db,
+	}
 }
 
 // 获取当前用户信息

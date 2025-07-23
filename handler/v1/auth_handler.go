@@ -15,11 +15,13 @@ type AuthHandler struct {
 	AuthUsecase *usecase.AuthUsecase
 }
 
-func RegisterAuthHandler(e *echo.Echo, authUsecase *usecase.AuthUsecase) {
+// NewAuthHandler 创建 AuthHandler
+func NewAuthHandler(e *echo.Echo, authUsecase *usecase.AuthUsecase) *AuthHandler {
 	h := &AuthHandler{AuthUsecase: authUsecase}
 	group := e.Group("/api/v1/auth")
 	group.POST("/register", h.Register)
 	group.POST("/login", h.Login)
+	return h
 }
 
 // Register 注册
@@ -43,7 +45,7 @@ func (h *AuthHandler) Register(c echo.Context) error {
 	}
 
 	// generate jwt token
-	userID = fmt.Sprintf("JUMP_%d", userID)
+	userID = fmt.Sprintf("JUMP_%s", userID)
 	token, err := utils.GenerateJwtToken(userID)
 	if err != nil {
 		return h.NewResponseWithError(c, "generate jwt token failed", err)
