@@ -1,0 +1,76 @@
+services:
+  intelligence-backend:
+    depends_on:
+      - postgres
+    restart: always
+    image: portus.in.chaitin.net/safepoint/intelligence-backend:local
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./config/api:/app/config
+      - ./static/awdb:/app/static/awdb
+    environment:
+      - SAFEPOINT_ENV=local
+    networks:
+      intelligence:
+        ipv4_address: 169.254.11.2
+  intelligence-consumer:
+    image: portus.in.chaitin.net/safepoint/intelligence-consumer:local
+    restart: always
+    environment:
+      - SAFEPOINT_ENV=local
+    volumes:
+      - ./config/consumer:/app/config
+    networks:
+      intelligence:
+        ipv4_address: 169.254.11.3
+  intelligence-cron:
+    image: portus.in.chaitin.net/safepoint/intelligence-cron:local
+    restart: always
+    volumes:
+      - ./config/cron:/app/config
+    networks:
+      intelligence:
+        ipv4_address: 169.254.11.4
+  intelligence-admin:
+    image: portus.in.chaitin.net/safepoint/intelligence-admin:local
+    restart: always
+    volumes:
+      - ./config/admin:/app/config
+      - ./static/awdb:/app/static/awdb
+    environment:
+      - SAFEPOINT_ENV=local
+    ports:
+      - 8082:8080
+    networks:
+      intelligence:
+        ipv4_address: 169.254.11.5
+  postgres:
+    image: postgres:16
+    restart: always
+    environment:
+      - POSTGRES_USER=intelligence
+      - POSTGRES_PASSWORD=intelligence7878
+      - POSTGRES_DB=intelligence
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    networks:
+      intelligence:
+        ipv4_address: 169.254.11.10
+  redis:
+    image: redis:7.4.2-alpine
+    container_name: redis
+    restart: always
+    command: ["redis-server", "--requirepass", "intelligence_wind7788"]
+    ports:
+      - 127.0.0.1:6379:6379
+    networks:
+      intelligence:
+        ipv4_address: 169.254.11.242
+
+networks:
+  intelligence:
+    ipam:
+      driver: default
+      config:
+        - subnet: "169.254.11.0/24"

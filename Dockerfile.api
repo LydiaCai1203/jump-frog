@@ -1,0 +1,30 @@
+FROM --platform=$BUILDPLATFORM portus.in.chaitin.net/library/golang:1.23-alpine AS builder
+
+RUN --mount=type=secret,id=SECRET_TOKEN \
+echo -e "machine git.in.chaitin.net\nlogin gitlab-ci-token\npassword $(cat /run/secrets/SECRET_TOKEN)" > ~/.netrc
+
+WORKDIR /src
+ENV CGO_ENABLED=0
+
+COPY go.mod go.sum ./
+RUN --mount=type=cache,target=/go/pkg/mod \
+    go mod tidy && go mod download
+
+COPY . .
+ARG TARGETOS TARGETARCH
+RUN --mount=type=cache,target=/root/.cache/go-build \
+    --mount=type=cache,target=/go/pkg/mod \
+    GOOS=$TARGETOS GOARCH=$TARGETARCH go build -ldflags "-s -w -extldflags '-static'" -o /build/api cmd/api/main.go
+
+
+FROM --platform=$TARGETPLATFORM portus.in.chaitin.net/library/alpine:3.19 AS api
+
+RUN apk update \
+    && apk upgrade \
+    && apk add --no-cache ca-certificates tzdata \
+    && update-ca-certificates 2>/dev/null || true
+
+WORKDIR /app
+COPY --from=builder /build/api /app/api
+
+CMD ["./api"]
