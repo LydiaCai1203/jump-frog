@@ -5,12 +5,16 @@ package domain
 type RegisterRequest struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
+	Email    string `json:"email"`
+	Phone    string `json:"phone"`
 	Nickname string `json:"nickname,omitempty"`
 }
 
 // 登录请求
 type LoginRequest struct {
-	Username string `json:"username"`
+	Username string `json:"username,omitempty"`
+	Email    string `json:"email,omitempty"`
+	Phone    string `json:"phone,omitempty"`
 	Password string `json:"password"`
 }
 

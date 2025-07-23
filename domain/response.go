@@ -9,9 +9,8 @@ type Response[T any] struct {
 
 // 注册响应
 type RegisterResponse struct {
-	ID       int    `json:"id"`
-	Username string `json:"username"`
-	Nickname string `json:"nickname"`
+	ID    string `json:"id"`
+	Token string `json:"token"`
 }
 
 // 登录响应

@@ -1,23 +1,45 @@
 package repo
 
-import "framework/domain"
+import (
+	"errors"
+
+	"framework/domain"
+
+	"github.com/google/uuid"
+	"gorm.io/gorm"
+)
 
 type AuthRepo struct {
-	// TODO: 注入 *gorm.DB
+	db *gorm.DB
 }
 
-func NewAuthRepo() *AuthRepo {
-	return &AuthRepo{}
+func NewAuthRepo(db *gorm.DB) *AuthRepo {
+	return &AuthRepo{db: db}
 }
 
-// 用户注册
+// Register 用户注册
 func (r *AuthRepo) Register(req domain.RegisterRequest) (id string, err error) {
-	// TODO: 实现注册
-	return "mock_id", nil
+	user := domain.User{
+		ID:       uuid.New().String(),
+		Username: req.Username,
+		Email:    req.Email,
+		Phone:    req.Phone,
+		Password: req.Password,
+	}
+	if err := r.db.Create(&user).Error; err != nil {
+		return "", err
+	}
+	return user.ID, nil
 }
 
-// 用户登录校验
+// Login 用户登录校验
 func (r *AuthRepo) Login(req domain.LoginRequest) (token string, err error) {
-	// TODO: 实现登录校验
-	return "mock_token", nil
+	var user domain.User
+	if err := r.db.Where("username = ? OR email = ? OR phone = ?", req.Username, req.Email, req.Phone).First(&user).Error; err != nil {
+		return "", err
+	}
+	if user.Password != req.Password {
+		return "", errors.New("invalid username, email or phone or password")
+	}
+	return user.ID, nil
 }

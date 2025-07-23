@@ -1,8 +1,11 @@
 package v1
 
 import (
+	"fmt"
+
 	"framework/domain"
 	"framework/usecase"
+	"framework/utils"
 
 	"github.com/labstack/echo/v4"
 )
@@ -19,32 +22,66 @@ func RegisterAuthHandler(e *echo.Echo, authUsecase *usecase.AuthUsecase) {
 	group.POST("/login", h.Login)
 }
 
+// Register 注册
 func (h *AuthHandler) Register(c echo.Context) error {
 	var req domain.RegisterRequest
 	if err := c.Bind(&req); err != nil {
 		return h.NewResponseWithError(c, "invalid request", err)
 	}
+
+	if req.Email == "" && req.Phone == "" {
+		return h.NewResponseWithError(c, "email or phone is required", nil)
+	}
+
 	if req.Username == "" || req.Password == "" {
 		return h.NewResponseWithError(c, "username and password are required", nil)
 	}
-	// TODO: 调用 usecase 注册
-	resp := struct {
-		ID string `json:"id"`
-	}{ID: "mock_id"}
-	return h.NewResponseWithData(c, resp)
+
+	userID, err := h.AuthUsecase.Register(req)
+	if err != nil {
+		return h.NewResponseWithError(c, "register failed", err)
+	}
+
+	// generate jwt token
+	userID = fmt.Sprintf("JUMP_%d", userID)
+	token, err := utils.GenerateJwtToken(userID)
+	if err != nil {
+		return h.NewResponseWithError(c, "generate jwt token failed", err)
+	}
+
+	return h.NewResponseWithData(c, domain.RegisterResponse{
+		ID:    userID,
+		Token: token,
+	})
 }
 
+// Login 登录
 func (h *AuthHandler) Login(c echo.Context) error {
 	var req domain.LoginRequest
 	if err := c.Bind(&req); err != nil {
 		return h.NewResponseWithError(c, "invalid request", err)
 	}
-	if req.Username == "" || req.Password == "" {
-		return h.NewResponseWithError(c, "username and password are required", nil)
+	if req.Username == "" && req.Email == "" && req.Phone == "" {
+		return h.NewResponseWithError(c, "username, email or phone is required", nil)
 	}
-	// TODO: 调用 usecase 登录
-	resp := struct {
-		Token string `json:"token"`
-	}{Token: "mock_token"}
-	return h.NewResponseWithData(c, resp)
+
+	if req.Password == "" {
+		return h.NewResponseWithError(c, "password is required", nil)
+	}
+
+	userID, err := h.AuthUsecase.Login(req)
+	if err != nil {
+		return h.NewResponseWithError(c, "login failed", err)
+	}
+
+	// generate jwt token
+	userID = fmt.Sprintf("JUMP_%s", userID)
+	token, err := utils.GenerateJwtToken(userID)
+	if err != nil {
+		return h.NewResponseWithError(c, "generate jwt token failed", err)
+	}
+
+	return h.NewResponseWithData(c, domain.LoginResponse{
+		Token: token,
+	})
 }

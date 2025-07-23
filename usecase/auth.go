@@ -1,23 +1,24 @@
 package usecase
 
-import "framework/domain"
+import (
+	"framework/domain"
+	"framework/repo"
+)
 
 type AuthUsecase struct {
-	// TODO: 注入 repo 层依赖
+	authRepo *repo.AuthRepo
 }
 
-func NewAuthUsecase() *AuthUsecase {
-	return &AuthUsecase{}
+func NewAuthUsecase(authRepo *repo.AuthRepo) *AuthUsecase {
+	return &AuthUsecase{authRepo: authRepo}
 }
 
 // 用户注册
 func (u *AuthUsecase) Register(req domain.RegisterRequest) (id string, err error) {
-	// TODO: 实现注册逻辑
-	return "mock_id", nil
+	return u.authRepo.Register(req)
 }
 
 // 用户登录
 func (u *AuthUsecase) Login(req domain.LoginRequest) (token string, err error) {
-	// TODO: 实现登录逻辑
-	return "mock_token", nil
+	return u.authRepo.Login(req)
 }
